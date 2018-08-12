@@ -5,3 +5,8 @@ source 'https://rubygems.org'
 #gem "ruboty-redis"
 gem "ruboty-slack_rtm"
 gem "octokit"
+gem "activesupport"
+
+group :development, :test do
+  gem 'pry'
+end
