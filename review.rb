@@ -7,6 +7,9 @@ module Ruboty
       on(/review/i, name: "review", description: "assign review")
 
 			def review(message)
+        # TODO 消す
+        Dotenv.load
+ 
         vars = message.squish.split ","
 
         team, pull_request_url = 
