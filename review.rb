@@ -1,5 +1,6 @@
 # TODO 消す
 Dotenv.load
+
 module Ruboty
 	module Handlers
 		class Review < Base
@@ -28,12 +29,12 @@ module Ruboty
           end
       end
 
-      def pull_request_id_by(url: pull_request_url)
-        pull_request_url.split("/").last 
+      def pull_request_id_by(url:)
+        url.split("/").last
       end
 
       def request_pull_request_review(pull_request_id)
-        octokit = Octokit::Client.new
+        octokit = Octokit::Client.new(access_token: ENV["OCTOKIT_ACCESS_TOKEN"])
         octokit.request_pull_request_review(ENV["GITHUB_REPOSITORY"], pull_request_id, reviewers: ["mo10sa10"])
       end
 		end
