@@ -9,24 +9,33 @@ module Ruboty
       on(/review/i, name: "review", description: "assign review")
 
 			def review(message)
-        vars = message.body.squish.split " "
+        group, pull_request_url = parse_message(message.body)
+        request_pull_request_review(pull_request_id_by(url: pull_request_url))
+				message.reply("Hello!!")
+			end
 
+      private
+      def parse_message(message_body)
+        vars = message_body.squish.split " "
         group, pull_request_url = 
           case vars.size
           when 3
-            [nil, vars[2]]
+            return [nil, vars[2]]
           when 4
-            [vars[2], vars[3]]
+            return [vars[2], vars[3]]
           else
-            return
+            raise
           end
+      end
 
-        pull_request_id = pull_request_url.split("/").last
+      def pull_request_id_by(url: pull_request_url)
+        pull_request_url.split("/").last 
+      end
+
+      def request_pull_request_review(pull_request_id)
         octokit = Octokit::Client.new
-        octokit.request_pull_request_review(ENV["GITHUB_REPOSITORY"], pull_request_url, reviewers: ["mo10sa10"])
-
-				message.reply("Hello!!")
-			end
+        octokit.request_pull_request_review(ENV["GITHUB_REPOSITORY"], pull_request_id, reviewers: ["mo10sa10"])
+      end
 		end
 	end
 end
