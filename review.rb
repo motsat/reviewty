@@ -1,3 +1,5 @@
+# TODO 消す
+Dotenv.load
 module Ruboty
 	module Handlers
 		class Review < Base
@@ -7,20 +9,16 @@ module Ruboty
       on(/review/i, name: "review", description: "assign review")
 
 			def review(message)
-        # TODO 消す
-        Dotenv.load
- 
-        vars = message.squish.split ","
+        vars = message.body.squish.split " "
 
-        team, pull_request_url = 
+        group, pull_request_url = 
           case vars.size
-          when 2
-            [nil, vars[1]]
           when 3
-            [vars[1], vars[2]]
-          when 3
+            [nil, vars[2]]
+          when 4
+            [vars[2], vars[3]]
           else
-            raise
+            return
           end
 
         pull_request_id = pull_request_url.split("/").last
