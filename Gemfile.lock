@@ -69,6 +69,7 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
+  dotenv
   octokit
   pry
   ruboty-slack_rtm
