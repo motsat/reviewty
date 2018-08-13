@@ -6,16 +6,22 @@ module Ruboty
 		class Review < Base
       require 'octokit'
       require 'active_support/core_ext/string/filters'
+      require 'redis-objects'
 
       on(/review/i, name: "review", description: "assign review")
 
 			def review(message)
-        group, pull_request_url = parse_message(message.body)
+        team, pull_request_url = parse_message(message.body)
+        team_members_of(team: team)
         request_pull_request_review(pull_request_id_by(url: pull_request_url))
 				message.reply("Hello!!")
 			end
 
       private
+      def team_members_of(team: )
+        team_github_acounts = Redis::List.new('team_github_acounts')
+      end
+
       def parse_message(message_body)
         vars = message_body.squish.split " "
         group, pull_request_url = 
@@ -40,4 +46,3 @@ module Ruboty
 		end
 	end
 end
-

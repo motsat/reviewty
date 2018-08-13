@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 gem "ruboty-slack_rtm"
 gem "octokit"
 gem "activesupport"
+gem "redis-objects"
 
 group :development, :test do
   gem 'pry'
