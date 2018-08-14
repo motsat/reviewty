@@ -18,8 +18,18 @@ module Ruboty
 			end
 
       private
-      def team_members_of(team: )
-        team_github_acounts = Redis::List.new('team_github_acounts')
+      def team_github_acount_name_stores
+        ["team_bd_github_acounts", "team_bd_github_acounts"]
+      end
+
+      def team_members_of(team:)
+        users = Redis::List.new('users', marshal: true)
+ 
+        # users.del
+        # users << { github_account: "motsat", slack_account: "motsat" , teams: [:mp]}
+        # users << { github_account: "mo10sa10", slack_account: "mo10sa10slack" , teams: [:bd]}
+
+        users.select { |user| user[:teams].include? team }
       end
 
       def parse_message(message_body)
