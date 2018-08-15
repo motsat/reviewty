@@ -12,9 +12,9 @@ module Ruboty
 
 			def review(message)
         team, pull_request_url = parse_message(message.body)
-        team_members_of(team: team)
+        team_member_of(team: team)
         request_pull_request_review(pull_request_id_by(url: pull_request_url))
-				message.reply("Hello!!")
+				message.reply("<@#{message.original[:user]["id"]}> assigned!")
 			end
 
       private
@@ -22,14 +22,14 @@ module Ruboty
         ["team_bd_github_acounts", "team_bd_github_acounts"]
       end
 
-      def team_members_of(team:)
+      def team_member_of(team:)
         users = Redis::List.new('users', marshal: true)
  
         # users.del
         # users << { github_account: "motsat", slack_account: "motsat" , teams: [:mp]}
         # users << { github_account: "mo10sa10", slack_account: "mo10sa10slack" , teams: [:bd]}
 
-        users.select { |user| user[:teams].include? team }
+        users.find { |user| user[:teams].include? team }
       end
 
       def parse_message(message_body)
