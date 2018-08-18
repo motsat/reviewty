@@ -1,6 +1,6 @@
 # TODO 消す
 Dotenv.load
-
+require "./user"
 module Ruboty
 	module Handlers
 		class Review < Base
@@ -20,10 +20,11 @@ module Ruboty
       on(/useradd/i, name: "useradd", description: "useradd [slack_real_name or email] [github_account]")
 
 			def useradd(message)
+        binding.pry
         slack_realname_or_email, github_account = parse_useradd_message(message.body)
 
-        slack_id = lack_id_by(realname_or_email: slack_realname_or_email)
-        if slack_id
+        slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
+        if slack_member
           message.reply("<@#{message.original[:user]["id"]}> found!")
         else
           message.reply("<@#{message.original[:user]["id"]}> not found!")
@@ -76,7 +77,7 @@ module Ruboty
         @users_list ||= slack_client.users_list
       end
 
-      def slack_id_by(realname_or_email: )
+      def slack_member_by(realname_or_email: )
         users_list["members"].find do |member|
           member_realname_or_emails = 
             [member["profile"]["real_name"],
@@ -84,7 +85,7 @@ module Ruboty
              member["profile"]["display_name"],
              member["profile"]["email"]
           ]
-          member_realname_or_emails.include? real_name_normalized
+          member_realname_or_emails.include? realname_or_email
         end
       end
 
