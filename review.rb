@@ -20,14 +20,14 @@ module Ruboty
       on(/useradd/i, name: "useradd", description: "useradd [slack_real_name or email] [github_account]")
 
 			def useradd(message)
-        binding.pry
         slack_realname_or_email, github_account = parse_useradd_message(message.body)
 
         slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
         if slack_member
-          message.reply("<@#{message.original[:user]["id"]}> found!")
+          User.add(slack_member_id: slack_member["id"], github_account: github_account)
+          message.reply("<@#{message.original[:user]["id"]}> modified success!")
         else
-          message.reply("<@#{message.original[:user]["id"]}> not found!")
+          message.reply("<@#{message.original[:user]["id"]}> not found in slack members!")
         end
 			end
 
