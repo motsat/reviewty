@@ -23,12 +23,13 @@ module Ruboty
         slack_realname_or_email, github_account = parse_useradd_message(message.body)
 
         slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
-        if slack_member
-          Reviewer.add(slack_member_id: slack_member["id"], github_account: github_account)
-          message.reply("<@#{message.original[:user]["id"]}> modified success!")
-        else
+        unless slack_member
           message.reply("<@#{message.original[:user]["id"]}> not found in slack members!")
+          return
         end
+
+        Reviewer.add(slack_member_id: slack_member["id"], github_account: github_account)
+        message.reply("<@#{message.original[:user]["id"]}> modified success!")
 			end
 
       on(/userdel/i, name: "userdel", description: "userdel [slack_real_name or email]")
@@ -48,7 +49,7 @@ module Ruboty
       on(/lists/i, name: "lists", description: "lists")
 
 			def lists(message)
-        message.reply Reviewer.all.map(&:to_s).join("\n")
+        message.reply "reviewers↓↓\n\n" + Reviewer.all.map(&:to_s).join("\n")
 			end
 
       private

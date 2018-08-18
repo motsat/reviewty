@@ -16,7 +16,7 @@ class Reviewer
 
   def self.delete(slack_member_id:)
     reviewer = find_by_slack_member_id(slack_member_id)
-    lists.delete if reviewer
+    lists.delete reviewer if reviewer
   end
 
   def self.all
