@@ -1,6 +1,6 @@
 # TODO 消す
 Dotenv.load
-require "./user"
+require "./reviewer"
 module Ruboty
 	module Handlers
 		class Review < Base
@@ -24,11 +24,31 @@ module Ruboty
 
         slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
         if slack_member
-          User.add(slack_member_id: slack_member["id"], github_account: github_account)
+          Reviewer.add(slack_member_id: slack_member["id"], github_account: github_account)
           message.reply("<@#{message.original[:user]["id"]}> modified success!")
         else
           message.reply("<@#{message.original[:user]["id"]}> not found in slack members!")
         end
+			end
+
+      on(/userdel/i, name: "userdel", description: "userdel [slack_real_name or email]")
+
+			def userdel(message)
+        slack_realname_or_email = parse_userdel_message(message.body)
+
+        slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
+        if slack_member
+          Reviewer.delete(slack_member_id: slack_member["id"])
+          message.reply("<@#{message.original[:user]["id"]}> modified success!")
+        else
+          message.reply("<@#{message.original[:user]["id"]}> not found in slack members!")
+        end
+			end
+
+      on(/lists/i, name: "lists", description: "lists")
+
+			def lists(message)
+        message.reply Reviewer.all.map(&:to_s).join("\n")
 			end
 
       private
@@ -62,6 +82,11 @@ module Ruboty
       def parse_useradd_message(message_body)
         vars = message_body.squish.split " "
         [vars[2], vars[3]] # 1.slack_realname or email, 2.github_account
+      end
+
+      def parse_userdel_message(message_body)
+        vars = message_body.squish.split " "
+        vars[2] # 1.slack_realname or email
       end
 
       def pull_request_id_by(url:)
