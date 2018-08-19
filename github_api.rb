@@ -1,7 +1,7 @@
 class GithubAPI
-  def assign_reviewer(pull_request_url)
+  def assign_reviewer(pull_request_url, reviewer_accounts)
     id = pull_request_id_by_url(pull_request_url)
-    octokit.request_pull_request_review(ENV["GITHUB_REPOSITORY"], id, reviewers: ["mo10sa10"])
+    octokit.request_pull_request_review(ENV["GITHUB_REPOSITORY"], id, reviewers: reviewer_accounts)
   end
 
   private

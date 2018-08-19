@@ -30,8 +30,10 @@ module Ruboty
 
         return message.reply("<@#{message.original[:user]["id"]}> member not found") if reviewers.size == 0
 
-        github_api.assign_reviewer(pull_request_url)
-				message.reply("<@#{message.original[:user]["id"]}> assigned!")
+        github_api.assign_reviewer(pull_request_url, reviewers.map(&:github_account))
+        to = reviewers.map { |l| "<@#{l.slack_member_id}>" }.join " "
+
+				message.reply("please review #{pull_request_url}\n#{to}")
 			end
 
       on(/useradd/i, name: "useradd", description: "useradd [slack_real_name or email] [github_account]")
