@@ -2,6 +2,7 @@
 Dotenv.load
 require "./reviewer"
 require "./parser"
+require "./slack_api"
 
 module Ruboty
 	module Handlers
@@ -24,7 +25,7 @@ module Ruboty
 			def useradd(message)
         slack_realname_or_email, github_account = UserAddParser.new(message.body).parse
 
-        slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
+        slack_member = slack_api.find_by_realname_or_email(slack_realname_or_email)
         unless slack_member
           message.reply("<@#{message.original[:user]["id"]}> not found in slack members!")
           return
@@ -39,7 +40,7 @@ module Ruboty
 			def userdel(message)
         slack_realname_or_email = UserDelParser.new(message.body).parse
 
-        slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
+        slack_member = slack_api.find_by_realname_or_email(slack_realname_or_email)
         if slack_member
           Reviewer.delete(slack_member_id: slack_member["id"])
           message.reply("<@#{message.original[:user]["id"]}> modified success!")
@@ -59,10 +60,6 @@ module Ruboty
 			end
 
       private
-      def team_github_acount_name_stores
-        ["team_bd_github_acounts", "team_bd_github_acounts"]
-      end
-
       def team_member_of(team:)
         # users = Redis::List.new('users', marshal: true)
         # # users.del
@@ -80,24 +77,8 @@ module Ruboty
         octokit.request_pull_request_review(ENV["GITHUB_REPOSITORY"], pull_request_id, reviewers: ["mo10sa10"])
       end
 
-      def users_list
-        @users_list ||= slack_client.users_list
-      end
-
-      def slack_member_by(realname_or_email: )
-        users_list["members"].find do |member|
-          member_realname_or_emails = 
-            [member["profile"]["real_name"],
-             member["profile"]["real_name_normalized"],
-             member["profile"]["display_name"],
-             member["profile"]["email"]
-          ]
-          member_realname_or_emails.include? realname_or_email
-        end
-      end
-
-      def slack_client
-        @slack_client ||= Slack::Client.new(token: ENV['SLACK_TOKEN'])
+      def slack_api
+        @slack_api ||= SlackAPI.new
       end
     end
 	end
