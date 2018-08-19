@@ -15,8 +15,11 @@ module Ruboty
       on(/assign/i, name: "assign", description: "review [group] [pull_request_url]")
 
 			def assign(message)
-        team, pull_request_url = AssignParser.new(message.body).parse
-        team_member_of(team: team)
+        tag, pull_request_url = AssignParser.new(message.body).parse
+        reviewers = Reviewer.by_tag(tag)
+        # TODO
+        # reviewers -  me
+        tag_member_of(tag: tag)
         github_api.assign_reviewer(pull_request_url)
 				message.reply("<@#{message.original[:user]["id"]}> assigned!")
 			end
@@ -61,12 +64,12 @@ module Ruboty
 			end
 
       private
-      def team_member_of(team:)
+      def tag_member_of(tag:)
         # users = Redis::List.new('users', marshal: true)
         # # users.del
-        # # users << { github_account: "motsat", slack_account: "motsat" , teams: [:mp]}
-        # # users << { github_account: "mo10sa10", slack_account: "mo10sa10slack" , teams: [:bd]}
-        # users.find { |user| user[:teams].include? team }
+        # # users << { github_account: "motsat", slack_account: "motsat" , tags: [:mp]}
+        # # users << { github_account: "mo10sa10", slack_account: "mo10sa10slack" , tags: [:bd]}
+        # users.find { |user| user[:tags].include? tag }
       end
 
       def github_api
