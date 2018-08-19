@@ -8,10 +8,10 @@ module Ruboty
       require 'active_support/core_ext/string/filters'
       require 'redis-objects'
 
-      on(/review/i, name: "review", description: "review [group] [pull_request_url]")
+      on(/assign/i, name: "assign", description: "review [group] [pull_request_url]")
 
-			def review(message)
-        team, pull_request_url = parse_review_message(message.body)
+			def assign(message)
+        team, pull_request_url = AssignParser.new(message.body).parse
         team_member_of(team: team)
         request_pull_request_review(pull_request_id_by(url: pull_request_url))
 				message.reply("<@#{message.original[:user]["id"]}> assigned!")
@@ -20,7 +20,7 @@ module Ruboty
       on(/useradd/i, name: "useradd", description: "useradd [slack_real_name or email] [github_account]")
 
 			def useradd(message)
-        slack_realname_or_email, github_account = parse_useradd_message(message.body)
+        slack_realname_or_email, github_account = UserAddParser.new(message.body).parse
 
         slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
         unless slack_member
@@ -35,7 +35,7 @@ module Ruboty
       on(/userdel/i, name: "userdel", description: "userdel [slack_real_name or email]")
 
 			def userdel(message)
-        slack_realname_or_email = parse_userdel_message(message.body)
+        slack_realname_or_email = UserDelParser.new(message.body).parse
 
         slack_member = slack_member_by(realname_or_email: slack_realname_or_email)
         if slack_member
@@ -52,42 +52,21 @@ module Ruboty
         message.reply "reviewers↓↓\n\n" + Reviewer.all.map(&:to_s).join("\n")
 			end
 
+      on(/chgrp/i, name: "chgrp", description: "lists")
+			def chgrp(message)
+			end
+
       private
       def team_github_acount_name_stores
         ["team_bd_github_acounts", "team_bd_github_acounts"]
       end
 
       def team_member_of(team:)
-        users = Redis::List.new('users', marshal: true)
- 
-        # users.del
-        # users << { github_account: "motsat", slack_account: "motsat" , teams: [:mp]}
-        # users << { github_account: "mo10sa10", slack_account: "mo10sa10slack" , teams: [:bd]}
-
-        users.find { |user| user[:teams].include? team }
-      end
-
-      def parse_review_message(message_body)
-        vars = message_body.squish.split " "
-        group, pull_request_url = 
-          case vars.size
-          when 3
-            return [nil, vars[2]]
-          when 4
-            return [vars[2], vars[3]]
-          else
-            raise
-          end
-      end
-
-      def parse_useradd_message(message_body)
-        vars = message_body.squish.split " "
-        [vars[2], vars[3]] # 1.slack_realname or email, 2.github_account
-      end
-
-      def parse_userdel_message(message_body)
-        vars = message_body.squish.split " "
-        vars[2] # 1.slack_realname or email
+        # users = Redis::List.new('users', marshal: true)
+        # # users.del
+        # # users << { github_account: "motsat", slack_account: "motsat" , teams: [:mp]}
+        # # users << { github_account: "mo10sa10", slack_account: "mo10sa10slack" , teams: [:bd]}
+        # users.find { |user| user[:teams].include? team }
       end
 
       def pull_request_id_by(url:)
@@ -118,6 +97,56 @@ module Ruboty
       def slack_client
         @slack_client ||= Slack::Client.new(token: ENV['SLACK_TOKEN'])
       end
-		end
+
+      class Parser
+        attr_reader :message
+        def initialize(message)
+          @message = message
+        end
+        def parse
+          raise "abstruct method"
+        end
+      end
+
+      class AssignParser < Parser
+        def parse
+          vars = message.squish.split " "
+          group, pull_request_url = 
+            case vars.size
+            when 3
+              return [nil, vars[2]]
+            when 4
+              return [vars[2], vars[3]]
+            else
+              raise
+            end
+        end
+      end
+
+      class ListsParser
+        def parse
+          raise NotImplementedError "No need for now"
+        end
+      end
+
+      class UserAddParser
+        def parse
+          vars = message.squish.split " "
+          [vars[2], vars[3]] # 1.slack_realname or email, 2.github_account
+        end
+      end
+
+      class UserDelParser
+        def parse
+          vars = message_body.squish.split " "
+          vars[2] # 1.slack_realname or email
+        end
+      end
+
+      class ChgrpParser
+        def parse
+        end
+      end
+    end
 	end
 end
