@@ -123,27 +123,27 @@ module Ruboty
         end
       end
 
-      class ListsParser
+      class ListsParser < Parser
         def parse
           raise NotImplementedError "No need for now"
         end
       end
 
-      class UserAddParser
+      class UserAddParser < Parser
         def parse
           vars = message.squish.split " "
           [vars[2], vars[3]] # 1.slack_realname or email, 2.github_account
         end
       end
 
-      class UserDelParser
+      class UserDelParser < Parser
         def parse
-          vars = message_body.squish.split " "
+          vars = message.squish.split " "
           vars[2] # 1.slack_realname or email
         end
       end
 
-      class ChgrpParser
+      class ChgrpParser < Parser
         def parse
         end
       end
