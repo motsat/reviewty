@@ -16,7 +16,20 @@ module Ruboty
 
 			def assign(message)
         tag, pull_request_url = AssignParser.new(message.body).parse
-        reviewers = Reviewer.by_tag(tag)
+
+        reviewers = 
+          if tag
+            Reviewer.by_tag(tag)
+          else
+            # TODO laters reviewed
+            [Reviewer.all.first]
+          end
+
+        # assignしようとしている人がReviewer登録しているとも限らない
+        reviewers.reject! {|r| r.slack_member_id == message.original[:user]["id"] }
+
+        return message.reply("<@#{message.original[:user]["id"]}> member not found") if reviewers.size == 0
+
         github_api.assign_reviewer(pull_request_url)
 				message.reply("<@#{message.original[:user]["id"]}> assigned!")
 			end
