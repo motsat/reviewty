@@ -3,6 +3,7 @@ Dotenv.load
 require "./reviewer"
 require "./parser"
 require "./slack_api"
+require "./github_api"
 
 module Ruboty
 	module Handlers
@@ -16,7 +17,7 @@ module Ruboty
 			def assign(message)
         team, pull_request_url = AssignParser.new(message.body).parse
         team_member_of(team: team)
-        request_pull_request_review(pull_request_id_by(url: pull_request_url))
+        github_api.assign_reviewer(pull_request_url)
 				message.reply("<@#{message.original[:user]["id"]}> assigned!")
 			end
 
@@ -68,18 +69,13 @@ module Ruboty
         # users.find { |user| user[:teams].include? team }
       end
 
-      def pull_request_id_by(url:)
-        url.split("/").last
-      end
-
-      def request_pull_request_review(pull_request_id)
-        octokit = Octokit::Client.new(access_token: ENV["OCTOKIT_ACCESS_TOKEN"])
-        octokit.request_pull_request_review(ENV["GITHUB_REPOSITORY"], pull_request_id, reviewers: ["mo10sa10"])
+      def github_api
+        @github_api ||= GithubAPI.new
       end
 
       def slack_api
         @slack_api ||= SlackAPI.new
       end
     end
-	end
+  end
 end
