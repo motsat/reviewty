@@ -4,7 +4,8 @@ class Reviewer
   attr_reader :slack_member_id, :github_account, :tags
 
   def self.find_by_slack_member_id(slack_member_id)
-    lists.find { |reviewer| reviewer[:slack_member_id] == slack_member_id }
+    vars = lists.find { |reviewer| reviewer[:slack_member_id] == slack_member_id }
+    Reviewer.new(vars)
   end
 
   def self.add(slack_member_id:, github_account:)
@@ -15,8 +16,9 @@ class Reviewer
   end
 
   def self.delete(slack_member_id:)
-    reviewer = find_by_slack_member_id(slack_member_id)
-    lists.delete reviewer if reviewer
+    # TODO find_by_realname_or_emailだとnewするので奇妙な感じになってる
+    vars = lists.find { |reviewer| reviewer[:slack_member_id] == slack_member_id }
+    lists.delete vars if vars
   end
 
   def self.by_tag(tag)
@@ -34,6 +36,11 @@ class Reviewer
 
   def has_tag?(tag)
     tags.include? tag
+  end
+
+  def set_tags(tags)
+    index = lists.to_a.index { |l| l[:slack_member_id] == slack_member_id }
+    lists[index] = lists[index].merge tags: tags
   end
 
   def to_s

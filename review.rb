@@ -12,14 +12,11 @@ module Ruboty
       require 'active_support/core_ext/string/filters'
       require 'redis-objects'
 
-      on(/assign/i, name: "assign", description: "review [group] [pull_request_url]")
+      on(/assign/i, name: "assign", description: "review [tag] [pull_request_url]")
 
 			def assign(message)
         tag, pull_request_url = AssignParser.new(message.body).parse
         reviewers = Reviewer.by_tag(tag)
-        # TODO
-        # reviewers -  me
-        tag_member_of(tag: tag)
         github_api.assign_reviewer(pull_request_url)
 				message.reply("<@#{message.original[:user]["id"]}> assigned!")
 			end
@@ -59,8 +56,17 @@ module Ruboty
         message.reply "reviewers↓↓\n\n" + Reviewer.all.map(&:to_s).join("\n")
 			end
 
-      on(/chgrp/i, name: "chgrp", description: "lists")
-			def chgrp(message)
+      on(/chtags/i, name: "chtags", description: "chtags [slack_real_name or email] [tags]...")
+			def chtags(message)
+        slack_realname_or_email, tags = ChTagsParser.new(message.body).parse
+        slack_member = slack_api.find_by_realname_or_email(slack_realname_or_email)
+        unless slack_member
+          message.reply("<@#{message.original[:user]["id"]}> slack_member not found")
+          return 
+        end
+        reviewer = Reviewer.find_by_slack_member_id(slack_member["id"])
+        reviewer.set_tags tags
+        message.reply("<@#{message.original[:user]["id"]}> modified success!")
 			end
 
       private

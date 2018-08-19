@@ -43,8 +43,10 @@ class UserDelParser < Parser
   end
 end
 
-class ChgrpParser < Parser
+class ChTagsParser < Parser
   def parse
+    vars = message.squish.split " "
+    [vars[2], vars[3..-1]] # 1.slack_realname or email, 2.tags
   end
 end
 
