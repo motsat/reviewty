@@ -32,7 +32,10 @@ module Ruboty
 
         github_api.assign_reviewer(pull_request_url, reviewers.map(&:github_account))
         to = reviewers.map { |l| "<@#{l.slack_member_id}>" }.join " "
-
+        reviewers.each do |l| 
+          l.last_reviewed_at = Time.now
+          l.save!
+        end
 				message.reply("please review #{pull_request_url}\n#{to}")
 			end
 
@@ -71,7 +74,7 @@ module Ruboty
         reviewers =  
           Reviewer.all.map do |reviewer|
             member = slack_api.find_member_by_id(reviewer.slack_member_id)
-            "slack: #{member["real_name"]}, github: #{reviewer.github_account} tags: #{reviewer.tags.join"/ "}" 
+            "slack: #{member["real_name"]}, github: #{reviewer.github_account} tags: #{reviewer.tags.join "/"} last_reviewed_at: #{reviewer.last_reviewed_at}" 
           end
         message.reply "reviewers↓↓\n\n" + reviewers.join("\n")
 			end
@@ -85,7 +88,8 @@ module Ruboty
           return 
         end
         reviewer = Reviewer.find_by_slack_member_id(slack_member["id"])
-        reviewer.set_tags tags
+        reviewer.tags = tags
+        reviewer.save!
         message.reply("<@#{message.original[:user]["id"]}> modified success!")
 			end
 

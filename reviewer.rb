@@ -1,7 +1,8 @@
 class Reviewer
   include Redis::Objects
   list :lists, global: true, marshal: true
-  attr_reader :slack_member_id, :github_account, :tags
+  attr_reader :slack_member_id
+  attr_accessor :github_account, :tags, :last_reviewed_at
 
   def self.find_by_slack_member_id(slack_member_id)
     vars = lists.find { |reviewer| reviewer[:slack_member_id] == slack_member_id }
@@ -38,12 +39,17 @@ class Reviewer
     tags.include? tag
   end
 
-  def set_tags(tags)
-    index = lists.to_a.index { |l| l[:slack_member_id] == slack_member_id }
-    lists[index] = lists[index].merge tags: tags
+  def save!
+    update_attributes( github_account: github_account, last_reviewed_at: last_reviewed_at, tags: tags)
   end
 
   private
+
+  def update_attributes(values)
+    index = lists.to_a.index { |l| l[:slack_member_id] == slack_member_id }
+    lists[index] = lists[index].merge values
+  end
+
 
   def initialize(slack_member_id:, github_account:, 
                  tags:, last_reviewed_at:)
