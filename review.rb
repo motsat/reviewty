@@ -41,7 +41,7 @@ module Ruboty
 			def useradd(message)
         slack_realname_or_email, github_account = UserAddParser.new(message.body).parse
 
-        slack_member = slack_api.find_by_realname_or_email(slack_realname_or_email)
+        slack_member = slack_api.find_member_by_realname_or_email(slack_realname_or_email)
         unless slack_member
           message.reply("<@#{message.original[:user]["id"]}> not found in slack members!")
           return
@@ -68,13 +68,18 @@ module Ruboty
       on(/lists/i, name: "lists", description: "lists")
 
 			def lists(message)
-        message.reply "reviewers↓↓\n\n" + Reviewer.all.map(&:to_s).join("\n")
+        reviewers =  
+          Reviewer.all.map do |reviewer|
+            member = slack_api.find_member_by_id(reviewer.slack_member_id)
+            "slack: #{member["real_name"]}, github: #{reviewer.github_account} tags: #{reviewer.tags.join"/ "}" 
+          end
+        message.reply "reviewers↓↓\n\n" + reviewers.join("\n")
 			end
 
       on(/chtags/i, name: "chtags", description: "chtags [slack_real_name or email] [tags]...")
 			def chtags(message)
         slack_realname_or_email, tags = ChTagsParser.new(message.body).parse
-        slack_member = slack_api.find_by_realname_or_email(slack_realname_or_email)
+        slack_member = slack_api.find_member_by_realname_or_email(slack_realname_or_email)
         unless slack_member
           message.reply("<@#{message.original[:user]["id"]}> slack_member not found")
           return 

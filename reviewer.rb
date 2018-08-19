@@ -43,10 +43,6 @@ class Reviewer
     lists[index] = lists[index].merge tags: tags
   end
 
-  def to_s
-    "slack_member_id: #{slack_member_id}, github_account: #{github_account} tags: #{tags.join"/ "}" 
-  end
-
   private
 
   def initialize(slack_member_id:, github_account:, 

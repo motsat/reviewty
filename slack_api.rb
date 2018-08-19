@@ -12,7 +12,13 @@ class SlackAPI
     @users_list = nil
   end
 
-  def find_by_realname_or_email(realname_or_email)
+  def find_member_by_id(slack_member_id)
+    users_list["members"].find do |member|
+      member["id"] == slack_member_id
+    end
+  end
+
+  def find_member_by_realname_or_email(realname_or_email)
     users_list["members"].find do |member|
       member_realname_or_emails = 
         [member["profile"]["real_name"],
