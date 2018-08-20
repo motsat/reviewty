@@ -21,15 +21,15 @@ module Ruboty
           if tag
             Reviewer.by_tag(tag)
           else
-            # TODO laters reviewed
-            [Reviewer.all.first]
+            Reviewer.all
           end
 
         # assignしようとしている人がReviewer登録しているとも限らない
         reviewers.reject! {|r| r.slack_member_id == message.original[:user]["id"] }
 
         return message.reply("<@#{message.original[:user]["id"]}> member not found") if reviewers.size == 0
-
+        # TODO pick size
+        reviewers = reviewers.sort(&:last_reviewed_at).first 1
         github_api.assign_reviewer(pull_request_url, reviewers.map(&:github_account))
         to = reviewers.map { |l| "<@#{l.slack_member_id}>" }.join " "
         reviewers.each do |l| 
