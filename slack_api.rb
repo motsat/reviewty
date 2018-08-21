@@ -21,10 +21,11 @@ class SlackAPI
   def find_member_by_realname_or_email(realname_or_email)
     users_list["members"].find do |member|
       member_realname_or_emails = 
-        [member["profile"]["real_name"],
-         member["profile"]["real_name_normalized"],
-         member["profile"]["display_name"],
-         member["profile"]["email"]
+        [member["name"],
+         #member["profile"]["real_name"],
+         #member["profile"]["real_name_normalized"],
+         #member["profile"]["display_name"],
+         #member["profile"]["email"]
       ]
         member_realname_or_emails.include? realname_or_email
     end

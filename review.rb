@@ -53,8 +53,7 @@ module Ruboty
 
 			def del(message)
         slack_realname_or_email = UserDelParser.new(message.body).parse
-
-        slack_member = slack_api.find_by_realname_or_email(slack_realname_or_email)
+        slack_member = slack_api.find_member_by_realname_or_email(slack_realname_or_email)
         if slack_member
           Reviewer.delete(slack_member_id: slack_member["id"])
           message.reply("<@#{message.original[:user]["id"]}> modified success!")
@@ -68,9 +67,8 @@ module Ruboty
 			def members(message)
         summarys =  
           Reviewer.all.map do |reviewer|
-          binding.pry
             member = slack_api.find_member_by_id(reviewer.slack_member_id)
-            "@#{member["real_name"]}\n github: #{reviewer.github_account}\n tags: #{reviewer.tags.join "/"}\n last_reviewed_at: #{reviewer.last_reviewed_at}" 
+            "@#{member["name"]}\n github: #{reviewer.github_account}\n tags: #{reviewer.tags.join "/"}\n last_reviewed_at: #{reviewer.last_reviewed_at}" 
           end
         message.reply "reviewers↓↓\n\n" + summarys.join("\n\n")
 			end

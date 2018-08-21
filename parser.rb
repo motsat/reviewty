@@ -32,21 +32,22 @@ end
 class UserAddParser < Parser
   def parse
     vars = message.squish.split " "
-    [vars[2], vars[3]] # 1.slack_realname or email, 2.github_account
+    [vars[2].gsub(/^@/, ""), vars[3]] # 1.slack_realname or email, 2.github_account
   end
 end
 
 class UserDelParser < Parser
   def parse
     vars = message.squish.split " "
-    vars[2] # 1.slack_realname or email
+    vars[2].gsub(/^@/,"")
+    # 1.slack_realname or email
   end
 end
 
 class ChTagsParser < Parser
   def parse
     vars = message.squish.split " "
-    [vars[2], vars[3..-1]] # 1.slack_realname or email, 2.tags
+    [vars[2].gsub(/^@/,""), vars[3..-1]] # 1.slack_realname or email, 2.tags
   end
 end
 
