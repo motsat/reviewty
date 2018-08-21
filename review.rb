@@ -17,12 +17,7 @@ module Ruboty
 			def assign(message)
         tag, pull_request_url = AssignParser.new(message.body).parse
 
-        reviewers = 
-          if tag
-            Reviewer.by_tag(tag)
-          else
-            Reviewer.all
-          end
+        reviewers = tag ?  Reviewer.by_tag(tag) : Reviewer.all
 
         # assignしようとしている人がReviewer登録しているとも限らない
         reviewers.reject! {|r| r.slack_member_id == message.original[:user]["id"] }
@@ -39,9 +34,9 @@ module Ruboty
 				message.reply("please review #{pull_request_url}\n#{to}")
 			end
 
-      on(/useradd/i, name: "useradd", description: "useradd [slack_real_name or email] [github_account]")
+      on(/add/i, name: "add", description: "add [slack_real_name or email] [github_account]")
 
-			def useradd(message)
+			def add(message)
         slack_realname_or_email, github_account = UserAddParser.new(message.body).parse
 
         slack_member = slack_api.find_member_by_realname_or_email(slack_realname_or_email)
@@ -51,12 +46,12 @@ module Ruboty
         end
 
         Reviewer.add(slack_member_id: slack_member["id"], github_account: github_account)
-        message.reply("<@#{message.original[:user]["id"]}> modified success!")
+        message.reply("<@#{message.original[:user]["id"]}> <@#{slack_member["id"]}> reviewer added!")
 			end
 
-      on(/userdel/i, name: "userdel", description: "userdel [slack_real_name or email]")
+      on(/del/i, name: "del", description: "del [slack_real_name or email]")
 
-			def userdel(message)
+			def del(message)
         slack_realname_or_email = UserDelParser.new(message.body).parse
 
         slack_member = slack_api.find_by_realname_or_email(slack_realname_or_email)
@@ -68,19 +63,20 @@ module Ruboty
         end
 			end
 
-      on(/lists/i, name: "lists", description: "lists")
+      on(/members/i, name: "members", description: "reviewers")
 
-			def lists(message)
-        reviewers =  
+			def members(message)
+        summarys =  
           Reviewer.all.map do |reviewer|
+          binding.pry
             member = slack_api.find_member_by_id(reviewer.slack_member_id)
-            "slack: #{member["real_name"]}, github: #{reviewer.github_account} tags: #{reviewer.tags.join "/"} last_reviewed_at: #{reviewer.last_reviewed_at}" 
+            "@#{member["real_name"]}\n github: #{reviewer.github_account}\n tags: #{reviewer.tags.join "/"}\n last_reviewed_at: #{reviewer.last_reviewed_at}" 
           end
-        message.reply "reviewers↓↓\n\n" + reviewers.join("\n")
+        message.reply "reviewers↓↓\n\n" + summarys.join("\n\n")
 			end
 
-      on(/chtags/i, name: "chtags", description: "chtags [slack_real_name or email] [tags]...")
-			def chtags(message)
+      on(/tagging/i, name: "tagging", description: "chtags [slack_real_name or email] [tags]...")
+			def tagging(message)
         slack_realname_or_email, tags = ChTagsParser.new(message.body).parse
         slack_member = slack_api.find_member_by_realname_or_email(slack_realname_or_email)
         unless slack_member
@@ -94,13 +90,6 @@ module Ruboty
 			end
 
       private
-      def tag_member_of(tag:)
-        # users = Redis::List.new('users', marshal: true)
-        # # users.del
-        # # users << { github_account: "motsat", slack_account: "motsat" , tags: [:mp]}
-        # # users << { github_account: "mo10sa10", slack_account: "mo10sa10slack" , tags: [:bd]}
-        # users.find { |user| user[:tags].include? tag }
-      end
 
       def github_api
         @github_api ||= GithubAPI.new
