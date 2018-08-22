@@ -18,15 +18,9 @@ class SlackAPI
     end
   end
 
-  def find_member_by_realname_or_email(realname_or_email)
+  def find_member_by_name(realname_or_email)
     users_list["members"].find do |member|
-      member_realname_or_emails = 
-        [member["name"],
-         #member["profile"]["real_name"],
-         #member["profile"]["real_name_normalized"],
-         #member["profile"]["display_name"],
-         #member["profile"]["email"]
-      ]
+      member_realname_or_emails = [member["name"]] # realname..?
         member_realname_or_emails.include? realname_or_email
     end
   end
