@@ -43,8 +43,14 @@ module Ruboty
           return
         end
 
-        Reviewer.add(slack_member_id: slack_member["id"], github_account: github_account)
-        message.reply("<@#{message.original[:user]["id"]}> <@#{slack_member["id"]}> reviewer added!")
+        member = lists.detect {|l| l[:slack_member_id] == slack_member_id}
+        reviewer = Reviewer.find_by_slack_member_id(slack_member["id"])
+        if reviewer
+          message.reply("<@#{message.original[:user]["id"]}> <@#{slack_member["id"]}> already exists!")
+        else
+          Reviewer.add(slack_member_id: slack_member["id"], github_account: github_account)
+          message.reply("<@#{message.original[:user]["id"]}> <@#{slack_member["id"]}> reviewer added!")
+        end
 			end
 
       on(/del/i, name: "del", description: "del [slack_real_name or email]")
