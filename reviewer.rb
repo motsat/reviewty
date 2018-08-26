@@ -6,7 +6,7 @@ class Reviewer
 
   def self.find_by_slack_member_id(slack_member_id)
     vars = lists.find { |reviewer| reviewer[:slack_member_id] == slack_member_id }
-    Reviewer.new(vars)
+    vars ? Reviewer.new(vars) : nil
   end
 
   def self.add(slack_member_id:, github_account:)

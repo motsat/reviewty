@@ -10,7 +10,7 @@ end
 
 class AssignParser < Parser
   def parse
-    vars = message.squish.split " "
+    vars = message.body.squish.split " "
     group, pull_request_url = 
       case vars.size
       when 3
@@ -31,22 +31,25 @@ end
 
 class UserAddParser < Parser
   def parse
-    vars = message.squish.split " "
-    [vars[2].gsub(/^@/, ""), vars[3]] # 1.slack_realname or email, 2.github_account
+    vars = message.body.squish.split " "
+    # [0]はbot自身、[1]は対象ユーザー
+    slack_member_id =  message.original[:mention_to][1]["id"]
+    github_account = vars[3]
+    [slack_member_id, github_account]
   end
 end
 
 class UserDelParser < Parser
   def parse
-    vars = message.squish.split " "
-    vars[2].gsub(/^@/,"")
-    # 1.slack_realname or email
+    vars = message.body.squish.split " "
+    # [0]はbot自身、[1]は対象ユーザー
+    message.original[:mention_to][1]["id"]
   end
 end
 
 class ChTagsParser < Parser
   def parse
-    vars = message.squish.split " "
+    vars = message.body.squish.split " "
     [vars[2].gsub(/^@/,""), vars[3..-1]] # 1.slack_realname or email, 2.tags
   end
 end

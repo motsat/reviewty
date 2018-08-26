@@ -15,7 +15,7 @@ module Ruboty
       on(/assign/i, name: "assign", description: "review [tag] [pull_request_url]")
 
 			def assign(message)
-        tag, pull_request_url = AssignParser.new(message.body).parse
+        tag, pull_request_url = AssignParser.new(message).parse
 
         reviewers = tag ?  Reviewer.by_tag(tag) : Reviewer.all
 
@@ -36,17 +36,10 @@ module Ruboty
       on(/add/i, name: "add", description: "add [slack_real_name or email] [github_account]")
 
 			def add(message)
-        slack_name, github_account = UserAddParser.new(message.body).parse
-        slack_member = slack_api.find_member_by_name(slack_name)
-        unless slack_member
-          message.reply("<@#{message.original[:user]["id"]}> not found in slack members!")
-          return
-        end
-
-        member = lists.detect {|l| l[:slack_member_id] == slack_member_id}
-        reviewer = Reviewer.find_by_slack_member_id(slack_member["id"])
+        slack_member_id, github_account = UserAddParser.new(message).parse
+        reviewer = Reviewer.find_by_slack_member_id(slack_member_id)
         if reviewer
-          message.reply("<@#{message.original[:user]["id"]}> <@#{slack_member["id"]}> already exists!")
+          message.reply("<@#{message.original[:user]["id"]}> <@#{slack_member_id}> already exists!")
         else
           Reviewer.add(slack_member_id: slack_member["id"], github_account: github_account)
           message.reply("<@#{message.original[:user]["id"]}> <@#{slack_member["id"]}> reviewer added!")
@@ -56,10 +49,10 @@ module Ruboty
       on(/del/i, name: "del", description: "del [slack_real_name or email]")
 
 			def del(message)
-        slack_name = UserDelParser.new(message.body).parse
-        slack_member = slack_api.find_member_by_name(slack_name)
-        if slack_member
-          Reviewer.delete(slack_member_id: slack_member["id"])
+        slack_member_id = UserDelParser.new(message).parse
+        reviewer = Reviewer.find_by_slack_member_id(slack_member_id)
+        if reviewer
+          Reviewer.delete(slack_member_id: slack_member_id)
           message.reply("<@#{message.original[:user]["id"]}> modified success!")
         else
           message.reply("<@#{message.original[:user]["id"]}> not found in slack members!")
@@ -79,7 +72,7 @@ module Ruboty
 
       on(/tagging/i, name: "tagging", description: "chtags [slack_real_name or email] [tags]...")
 			def tagging(message)
-        slack_name, tags = ChTagsParser.new(message.body).parse
+        slack_name, tags = ChTagsParser.new(message).parse
         slack_member = slack_api.find_member_by_name(slacK_name)
         unless slack_member
           message.reply("<@#{message.original[:user]["id"]}> slack_member not found")
