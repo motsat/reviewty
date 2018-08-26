@@ -1,8 +1,8 @@
-require "lib/ruboty/reviewer_assign/actions/add"
-require "lib/ruboty/reviewer_assign/actions/del"
-require "lib/ruboty/reviewer_assign/actions/tagging"
-require "lib/ruboty/reviewer_assign/actions/assign"
-require "lib/ruboty/reviewer_assign/actions/members"
+require "ruboty/reviewer_assign/actions/add"
+require "ruboty/reviewer_assign/actions/del"
+require "ruboty/reviewer_assign/actions/tagging"
+require "ruboty/reviewer_assign/actions/assign"
+require "ruboty/reviewer_assign/actions/members"
 
 module Ruboty
   module Handlers
@@ -30,6 +30,7 @@ module Ruboty
 			end
 
 			def members(message)
+        p 222
 				Ruboty::ReviewerAssign::Actions::Members.new(message).call
       end
 
