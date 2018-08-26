@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["motsat"]
   spec.email         = ["konpeiex@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{ruboty + slackでレビュアーアサイン}
+  spec.description   = %q{ruboty + slackでレビュアーアサイン}
+  spec.homepage      = "https://github.com/motsat/ruboty-reviewer_assign"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -32,7 +32,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.16"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "minitest", "~> 5.0"
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'dotenv'
+  spec.add_dependency "ruboty-slack_rtm"
+  spec.add_dependency "octokit"
+  spec.add_dependency "activesupport"
+  spec.add_dependency "redis-objects"
 end

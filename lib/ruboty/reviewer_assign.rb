@@ -1,7 +1,2 @@
 require "ruboty/reviewer_assign/version"
-
-module Ruboty
-  module ReviewerAssign
-    # Your code goes here...
-  end
-end
+require "ruboty/handlers/reviewer_assign"
