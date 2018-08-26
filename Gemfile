@@ -1,14 +1,6 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-#gem "ruboty-cron"
-## gem "ruboty-google_image"
-#gem "ruboty-redis"
-gem "ruboty-slack_rtm"
-gem "octokit"
-gem "activesupport"
-gem "redis-objects"
+git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
-group :development, :test do
-  gem 'pry'
-  gem 'dotenv'
-end
+# Specify your gem's dependencies in ruboty-reviewer_assign.gemspec
+gemspec
