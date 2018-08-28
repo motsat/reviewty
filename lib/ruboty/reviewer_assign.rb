@@ -1,4 +1,7 @@
 require "ruboty/reviewer_assign/version"
 require "ruboty/handlers/reviewer_assign"
+require "ruboty/reviewer_assign/slack_api"
+require "ruboty/reviewer_assign/github_api"
+require "ruboty/reviewer_assign/reviewer"
 require "octokit"
 require "ruboty/slack_rtm"

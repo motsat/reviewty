@@ -10,7 +10,7 @@ module Ruboty
 
         private
         def assign
-          tag, pull_request_url = AssignParser.new(message).parse
+          tag, pull_request_url = Ruboty::ReviewerAssign::Parsers::Assign.new(message).parse
 
           reviewers = tag ?  Reviewer.by_tag(tag) : Reviewer.all
 
