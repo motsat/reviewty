@@ -4,7 +4,7 @@ module Ruboty
       class Assign < Ruboty::Actions::Base
         def call
           message.reply(assign)
-        rescue => e
+        rescue Ruboty::ReviewerAssign::Parsers::Base::ParseError => e
           message.reply(e.message)
         end
 
