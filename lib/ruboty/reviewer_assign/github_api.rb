@@ -12,6 +12,8 @@ module Ruboty
       end
 
       def octokit
+        # https://github.com/octokit/octokit.rb
+        # Given $OCTOKIT_API_ENDPOINT
         @octokit ||= Octokit::Client.new(access_token: ENV["OCTOKIT_ACCESS_TOKEN"])
       end
     end
