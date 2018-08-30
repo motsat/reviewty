@@ -1,3 +1,5 @@
+require 'ruboty/reviewer_assign/parsers/tagging'
+
 module Ruboty
   module ReviewerAssign
     module Actions
@@ -10,15 +12,18 @@ module Ruboty
 
         private
         def tagging
-          slack_name, tags = Ruboty::ReviewerAssign::Parsers::Tagging.new(message).parse
-          slack_member = slack_api.find_member_by_name(slacK_name)
-          unless slack_member
-            return "<@#{message.original[:user]["id"]}> slack_member not found"
+          slack_member_id, tags = Ruboty::ReviewerAssign::Parsers::Tagging.new(message).parse
+          reviewer = Reviewer.find_by_slack_member_id(slack_member_id)
+          unless reviewer
+            return "<@#{slack_member_id}> reviewer not found"
           end
-          reviewer = Reviewer.find_by_slack_member_id(slack_member["id"])
           reviewer.tags = tags
           reviewer.save!
-          "<@#{message.original[:user]["id"]}> modified success!"
+          "<@#{slack_member_id}> modified success!"
+        end
+
+        def slack_api
+          SlackAPI.new
         end
       end
     end
