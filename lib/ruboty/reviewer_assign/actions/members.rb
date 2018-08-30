@@ -10,13 +10,13 @@ module Ruboty
 
         private
         def members
-          binding.pry
           summarys =  
             Reviewer.all.map do |reviewer|
-            member = slack_api.find_member_by_id(reviewer.slack_member_id)
-            "@#{member["name"]}\n github: #{reviewer.github_account}\n tags: #{reviewer.tags.join "/"}\n last_reviewed_at: #{reviewer.last_reviewed_at}" 
+              slack_api = SlackAPI.new
+              member = slack_api.find_member_by_id(reviewer.slack_member_id)
+              "@#{member["name"]}\n github: #{reviewer.github_account}\n tags: #{reviewer.tags.join "/"}\n last_reviewed_at: #{reviewer.last_reviewed_at}" 
             end
-          message.reply "reviewers↓↓\n\n" + summarys.join("\n\n")
+          "reviewers↓↓\n\n" + summarys.join("\n\n")
         end
       end
     end
