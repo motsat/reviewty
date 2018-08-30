@@ -1,3 +1,5 @@
+require 'ruboty/reviewer_assign/parsers/assign'
+
 module Ruboty
   module ReviewerAssign
     module Actions
@@ -26,6 +28,10 @@ module Ruboty
             l.save!
           end
           "please review #{pull_request_url}\n#{to}"
+        end
+
+        def github_api
+          GithubAPI.new
         end
       end
     end

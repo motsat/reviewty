@@ -8,21 +8,6 @@ class Parser
   end
 end
 
-class AssignParser < Parser
-  def parse
-    vars = message.body.squish.split " "
-    group, pull_request_url = 
-      case vars.size
-      when 3
-        return [nil, vars[2]]
-      when 4
-        return [vars[2], vars[3]]
-      else
-        raise
-      end
-  end
-end
-
 class UserDelParser < Parser
   def parse
   end
