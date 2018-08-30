@@ -1,3 +1,5 @@
+require 'ruboty/reviewer_assign/parsers/del'
+
 module Ruboty
   module ReviewerAssign
     module Actions

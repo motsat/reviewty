@@ -7,7 +7,6 @@ module Ruboty
         def parse
           vars = message.body.squish.split " "
           # [0]はbot自身、[1]は対象ユーザー
-          binding.pry
           raise ParseError.new 'invalid vars size' unless vars.size == 4
           raise ParseError.new "invalid slack account : #{vars[2]}" unless message.original[:mention_to][1]
           slack_member_id =  message.original[:mention_to][1]["id"]

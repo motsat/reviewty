@@ -23,22 +23,8 @@ class AssignParser < Parser
   end
 end
 
-class ListsParser < Parser
-  def parse
-    raise NotImplementedError "No need for now"
-  end
-end
-
-class UserAddParser < Parser
-  def parse
-  end
-end
-
 class UserDelParser < Parser
   def parse
-    vars = message.body.squish.split " "
-    # [0]はbot自身、[1]は対象ユーザー
-    message.original[:mention_to][1]["id"]
   end
 end
 
