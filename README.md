@@ -19,3 +19,12 @@ OCTOKIT_ACCESS_TOKEN="xxxxxx"
 SLACK_TOKEN="xxx"
 REDIS_URL="redis://xxx.xxx.x.x:6379"
 ```
+
+## How Get Token(Draft)
+Slack Global Menu
+Slackをカスタマイズ(Customize Slack)
+App管理
+
+カスタムインテグレーション
+Bots
+追加
