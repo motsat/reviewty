@@ -8,11 +8,11 @@ module Ruboty
   module Handlers
     # An Ruboty Handler + Actions to hoge-hige
     class ReviewerAssign < Base
-			on(/assign/i, name: "assign", description: "review [tag] [pull_request_url]")
-      on(/add/i, name: "add", description: "add [slack_real_name or email] [github_account]")
-      on(/del/i, name: "del", description: "del [slack_real_name or email]")
-      on(/members/i, name: "members", description: "reviewers")
-      on(/tagging/i, name: "tagging", description: "chtags [slack_real_name or email] [tags]...")
+			on(/assign /i, name: "assign", description: "プルリクのレビューをアサインする 例) assign (tag) https://github.com/motsat/reviewer_support_bot/pull/4")
+      on(/add /i, name: "add", description: "レビュアーを登録する 例) add @slack_account github_account")
+      on(/del /i, name: "del", description: "レビュアーを削除する 例) del @slack_account")
+      on(/members\z/i, name: "members", description: "レビュアー一覧 例) members")
+      on(/tagging /i, name: "tagging", description: "レビュアーにタグを設定 例) tagging @slack_account tag1 tag2")
 
       # env :DEFAULT_HOGE_TEXT1, "DEFAULT_HOGE_TEXT1 desc"
       # env :DEFAULT_HOGE_TEXT2, "DEFAULT_HOGE_TEXT2 desc"
@@ -30,7 +30,6 @@ module Ruboty
 			end
 
 			def members(message)
-        p 222
 				Ruboty::ReviewerAssign::Actions::Members.new(message).call
       end
 
