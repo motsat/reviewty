@@ -16,9 +16,9 @@ module Ruboty
           reviewer = Reviewer.find_by_slack_member_id(slack_member_id)
           if reviewer
             Reviewer.delete(slack_member_id: slack_member_id)
-            "<@#{message.original[:user]["id"]}> modified success!"
+            "<@#{message.original[:user]["id"]}> レビュアーを削除しました:skull:"
           else
-            "<@#{message.original[:user]["id"]}> not found in slack members!"
+            "<@#{message.original[:user]["id"]}> レビュアーが見つかりません:tired_face:"
           end
         end
       end

@@ -15,11 +15,11 @@ module Ruboty
           slack_member_id, tags = Ruboty::ReviewerAssign::Parsers::Tagging.new(message).parse
           reviewer = Reviewer.find_by_slack_member_id(slack_member_id)
           unless reviewer
-            return "<@#{slack_member_id}> reviewer not found"
+            return "<@#{slack_member_id}> レビュアーが見つかりません:tired_face:"
           end
           reviewer.tags = tags
           reviewer.save!
-          "<@#{slack_member_id}> modified success!"
+          "<@#{slack_member_id}> タグを変更しました:muscle:"
         end
 
         def slack_api

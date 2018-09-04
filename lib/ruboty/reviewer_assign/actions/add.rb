@@ -15,10 +15,10 @@ module Ruboty
           slack_member_id, github_account = Ruboty::ReviewerAssign::Parsers::Add.new(message).parse
           reviewer = Reviewer.find_by_slack_member_id(slack_member_id)
           if reviewer
-            "<@#{message.original[:user]["id"]}> <@#{slack_member_id}> already added!"
+            "<@#{message.original[:user]["id"]}> <@#{slack_member_id}> そのSlackアカウントは登録済です:innocent:"
           else
             Reviewer.add(slack_member_id: slack_member_id, github_account: github_account)
-            "<@#{message.original[:user]["id"]}> <@#{slack_member_id}> reviewer added!"
+            "<@#{message.original[:user]["id"]}> <@#{slack_member_id}> レビュアーを追加しました:muscle:"
           end
         end
       end

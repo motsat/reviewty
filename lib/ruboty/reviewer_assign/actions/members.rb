@@ -16,7 +16,7 @@ module Ruboty
               member = slack_api.find_member_by_id(reviewer.slack_member_id)
               "@#{member["name"]}\n github: #{reviewer.github_account}\n tags: #{reviewer.tags.join "/"}\n last_reviewed_at: #{reviewer.last_reviewed_at}" 
             end
-          "reviewers↓↓\n\n" + summarys.join("\n\n")
+          "登録済のレビュアー:family:↓↓\n\n" + summarys.join("\n\n")
         end
       end
     end
