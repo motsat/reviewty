@@ -1,8 +1,8 @@
 # Ruboty::ReviewerAssign
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ruboty/reviewer_assign`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+ruboty's plugin.
+Assign a reviewer from Slack to PithRequest of Github.
+Can be tagged to reviewers.
 
 ## Installation
 
@@ -20,11 +20,13 @@ SLACK_TOKEN="xxx"
 REDIS_URL="redis://xxx.xxx.x.x:6379"
 ```
 
-## How Get Token(Draft)
-Slack Global Menu
-Slackをカスタマイズ(Customize Slack)
-App管理
+## USAGE
+```
+@bot add @slack_account github_account
+@bot del @slack_account github_account
+@bot tagging @slack_account tag1 tag2
+@bot assign tag1 https://github.com/motsat/hoge_repo/pulls/1111
+```
 
-カスタムインテグレーション
-Bots
-追加
+## How Get Token(bot)
+https://slack.com/apps/A0F7YS25R-bots
