@@ -23,7 +23,7 @@ REDIS_URL="redis://xxx.xxx.x.x:6379"
 ## USAGE
 ```
 @bot add @slack_account github_account
-@bot del @slack_account github_account
+@bot del @slack_account
 @bot tagging @slack_account tag1 tag2
 @bot assign tag1 https://github.com/motsat/hoge_repo/pulls/1111
 ```
